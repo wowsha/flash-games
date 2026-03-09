@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE FLASH VAULT // ARCHIVE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Ruffle Integration: Points to your 'rufle' folder -->
+    <!-- Ruffle Integration -->
     <script src="rufle/ruffle.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -13,7 +13,7 @@
             --neon-green: #00ff41;
             --deep-obsidian: #050505;
             --glass: rgba(255, 255, 255, 0.03);
-            --player-height: 85vh; /* Default "Bigger" Window */
+            --player-height: 85vh;
         }
 
         body {
@@ -29,7 +29,6 @@
 
         .heading-font { font-family: 'Syncopate', sans-serif; text-transform: uppercase; }
 
-        /* Retro CRT Flicker Overlay */
         .crt-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -53,7 +52,6 @@
             box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
         }
 
-        /* Fullscreen Player Styles */
         #player-container {
             display: none;
             position: fixed;
@@ -141,10 +139,6 @@
         <h1 class="heading-font text-6xl md:text-9xl font-bold tracking-tighter">
             FLASH<br><span class="text-[#00ff41]">VAULT</span>
         </h1>
-        <div class="flex flex-col md:flex-row gap-8 mt-10 text-gray-400 text-xs border-l border-white/10 pl-6">
-            <p class="max-w-sm">Archive of vector-based gaming assets. Utilizing Ruffle for legacy browser execution.</p>
-            <p class="max-w-sm uppercase tracking-widest">[ 4096-BIT ENCRYPTION ]<br>[ NO_ADWARE_DETECTED ]</p>
-        </div>
     </header>
 
     <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -155,47 +149,42 @@
                 <div class="absolute top-2 right-2 unlocked-badge">UNLOCKED</div>
             </div>
             <h3 class="heading-font text-lg mb-1">Piggies Unlocked</h3>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Sandbox + Extra Features</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Full Sandbox Access</p>
         </div>
 
-        <!-- Standard Bad Piggies -->
         <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/bad_piggies.swf', 'Bad Piggies')">
             <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
                 <span class="text-5xl opacity-60 group-hover:opacity-100">🐷</span>
             </div>
             <h3 class="heading-font text-lg mb-1">Bad Piggies</h3>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Original Edition</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Original</p>
         </div>
 
-        <!-- Stick War -->
         <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/stickwar.swf', 'Stick War')">
             <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
                 <span class="text-5xl opacity-60 group-hover:opacity-100">⚔️</span>
             </div>
             <h3 class="heading-font text-lg mb-1">Stick War</h3>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Legacy Command</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Legacy</p>
         </div>
 
-        <!-- Stealing the Diamond -->
         <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/stealing_the_diamond.swf', 'Stealing the Diamond')">
             <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
                 <span class="text-5xl opacity-60 group-hover:opacity-100">💎</span>
             </div>
             <h3 class="heading-font text-lg mb-1">Stealing Diamond</h3>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Henry Stickman</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">H. Stickman</p>
         </div>
 
-        <!-- Escaping the Prison -->
         <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/escaping_the_prison.swf', 'Escaping the Prison')">
             <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
                 <span class="text-5xl opacity-60 group-hover:opacity-100">🏢</span>
             </div>
             <h3 class="heading-font text-lg mb-1">Escaping Prison</h3>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Henry Stickman</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">H. Stickman</p>
         </div>
     </main>
 
-    <!-- Player Container -->
     <div id="player-container">
         <div class="controls-bar">
             <div class="flex items-center gap-4">
@@ -209,46 +198,52 @@
             </div>
         </div>
         <div id="ruffle-wrapper">
-            <div id="ruffle-host" class="w-full h-full"></div>
+            <!-- Added specific data attributes for security bypass -->
+            <div id="ruffle-host" class="w-full h-full" data-allow-script-access="always"></div>
         </div>
     </div>
 
-    <footer class="mt-32 pt-10 border-t border-white/5 text-[9px] text-gray-700 flex flex-col md:flex-row justify-between gap-4">
-        <p>SOURCE_BRANCH: GITHUB_PAGES // ARCHIVE_V_2.0</p>
-        <p>DESIGNED FOR HIGH-RESOLUTION DISPLAYS // RUFFLE_ENGINE</p>
-    </footer>
-
     <script>
+        // CRITICAL: GLOBAL CONFIGURATION BEFORE LOADING
         window.RufflePlayer = window.RufflePlayer || {};
+        window.RufflePlayer.config = {
+            "allowScriptAccess": true,
+            "autoplay": "on",
+            "unmuteOverlay": "hidden",
+            "letterbox": "on",
+            "warnOnUnsupportedContent": false
+        };
+
         const ruffle = window.RufflePlayer.newest();
         let player = null;
 
-        // Dynamic Resize Logic
         function resizePlayer(height) {
             document.documentElement.style.setProperty('--player-height', height);
         }
 
-        function loadGame(swfPath, title) {
+        async function loadGame(swfPath, title) {
             const container = document.getElementById('player-container');
             const host = document.getElementById('ruffle-host');
             document.getElementById('current-title').innerText = title;
 
             container.style.display = 'flex';
-            host.innerHTML = ''; // Reset host
+            host.innerHTML = '';
             
             player = ruffle.createPlayer();
             host.appendChild(player);
 
-            player.load({
+            // Added comprehensive configuration object
+            const config = {
                 url: swfPath,
                 backgroundColor: "#050505",
-                wmode: "opaque",
-                scale: "showAll",
-                quality: "high",
-                // Fix for "Permission of allowScriptAccess is required"
-                allowScriptAccess: true, 
-                base: "assets/"
-            });
+                wmode: "direct", // Try direct for performance and script bypass
+                allowScriptAccess: true,
+                base: "assets/",
+                forceScale: true,
+                quality: "high"
+            };
+
+            player.load(config);
         }
 
         function closeGame() {
@@ -256,7 +251,6 @@
             document.getElementById('ruffle-host').innerHTML = '';
         }
 
-        // Global hotkey: Escape to exit game
         window.addEventListener('keydown', (e) => {
             if (e.key === "Escape") closeGame();
         });
