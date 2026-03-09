@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE FLASH VAULT // ARCHIVE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Ruffle Integration -->
+    <!-- Ruffle Integration: Points to your 'rufle' folder -->
     <script src="rufle/ruffle.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -13,6 +13,7 @@
             --neon-green: #00ff41;
             --deep-obsidian: #050505;
             --glass: rgba(255, 255, 255, 0.03);
+            --player-height: 85vh; /* Default "Bigger" Window */
         }
 
         body {
@@ -21,19 +22,19 @@
             font-family: 'Space Mono', monospace;
             overflow-x: hidden;
             background-image: 
-                linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
+                linear-gradient(rgba(0, 255, 65, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
         .heading-font { font-family: 'Syncopate', sans-serif; text-transform: uppercase; }
 
-        /* CRT Effect Overlay */
+        /* Retro CRT Flicker Overlay */
         .crt-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
             background-size: 100% 3px, 3px 100%;
             pointer-events: none;
             z-index: 100;
@@ -41,126 +42,180 @@
 
         .game-card {
             background: var(--glass);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
         }
 
         .game-card:hover {
             border-color: var(--neon-green);
-            transform: translateY(-5px);
-            box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
         }
 
+        /* Fullscreen Player Styles */
         #player-container {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(2, 2, 2, 0.98);
             z-index: 200;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
-        #ruffle-canvas {
-            width: 90%;
-            max-width: 1000px;
-            aspect-ratio: 4/3;
-            border: 2px solid var(--neon-green);
-            box-shadow: 0 0 50px rgba(0, 255, 65, 0.2);
+        #ruffle-wrapper {
+            width: 100%;
+            height: var(--player-height);
+            max-width: 1400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        ruffle-player {
+            width: 100% !important;
+            height: 100% !important;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            box-shadow: 0 0 60px rgba(0, 255, 65, 0.1);
+        }
+
+        .controls-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            width: 100%;
+            max-width: 1400px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .control-btn {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .control-btn:hover {
+            background: var(--neon-green);
+            color: black;
+            border-color: var(--neon-green);
+        }
+
+        .unlocked-badge {
+            background: #ffcc00;
+            color: black;
+            font-size: 9px;
+            padding: 2px 6px;
+            font-weight: 800;
+            margin-left: 10px;
+            vertical-align: middle;
         }
 
         .scanline {
-            width: 100%;
-            height: 2px;
-            background: rgba(0, 255, 65, 0.1);
+            width: 100%; height: 2px;
+            background: rgba(0, 255, 65, 0.05);
             position: absolute;
-            animation: scan 8s linear infinite;
+            animation: scan 10s linear infinite;
+            z-index: 101;
         }
 
-        @keyframes scan {
-            from { top: 0; }
-            to { top: 100%; }
-        }
-
-        .btn-close {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            border: 1px solid var(--neon-green);
-            padding: 0.5rem 1rem;
-            color: var(--neon-green);
-            cursor: pointer;
-        }
+        @keyframes scan { from { top: 0; } to { top: 100%; } }
     </style>
 </head>
-<body class="p-4 md:p-12">
+<body class="p-6 md:p-16">
     <div class="crt-overlay"></div>
     <div class="scanline"></div>
 
-    <!-- Header Section -->
-    <header class="mb-16 relative">
-        <div class="inline-block bg-[#00ff41] text-black px-2 py-1 text-xs font-bold mb-4">
-            STATUS: ONLINE // LEGACY SYSTEM ACTIVE
+    <header class="mb-20">
+        <div class="inline-block border border-[#00ff41] text-[#00ff41] px-3 py-1 text-[10px] font-bold mb-6 tracking-[0.2em]">
+            SYSTEM_PROTOCOL: ACTIVE
         </div>
-        <h1 class="heading-font text-5xl md:text-8xl font-bold tracking-tighter leading-none">
-            Flash <span class="text-[#00ff41]">Vault</span>
+        <h1 class="heading-font text-6xl md:text-9xl font-bold tracking-tighter">
+            FLASH<br><span class="text-[#00ff41]">VAULT</span>
         </h1>
-        <p class="mt-6 text-gray-400 max-w-xl text-sm leading-relaxed italic">
-            A preserved pocket of digital history. Executing legacy ActionScript 2.0/3.0 modules via Ruffle Emulation.
-        </p>
+        <div class="flex flex-col md:flex-row gap-8 mt-10 text-gray-400 text-xs border-l border-white/10 pl-6">
+            <p class="max-w-sm">Archive of vector-based gaming assets. Utilizing Ruffle for legacy browser execution.</p>
+            <p class="max-w-sm uppercase tracking-widest">[ 4096-BIT ENCRYPTION ]<br>[ NO_ADWARE_DETECTED ]</p>
+        </div>
     </header>
 
-    <!-- Games Grid -->
-    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Game 1 -->
-        <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/stickwar.swf', 'Stick War')">
-            <div class="aspect-square bg-zinc-900 mb-6 flex items-center justify-center border border-white/5 overflow-hidden">
-                <span class="text-4xl filter grayscale group-hover:grayscale-0 transition-all">⚔️</span>
+    <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <!-- Bad Piggies Unlocked -->
+        <div class="game-card p-6 cursor-pointer group border-t-2 border-t-yellow-500" onclick="loadGame('assets/main.swf', 'Bad Piggies Unlocked')">
+            <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5 relative">
+                <span class="text-5xl">🚜</span>
+                <div class="absolute top-2 right-2 unlocked-badge">UNLOCKED</div>
             </div>
-            <h3 class="heading-font text-lg mb-2">Stick War</h3>
-            <p class="text-xs text-gray-500">The empire of Order needs your command.</p>
+            <h3 class="heading-font text-lg mb-1">Piggies Unlocked</h3>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Sandbox + Extra Features</p>
         </div>
 
-        <!-- Game 2 -->
-        <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/stealing_the_diamond.swf', 'Stealing the Diamond')">
-            <div class="aspect-square bg-zinc-900 mb-6 flex items-center justify-center border border-white/5 overflow-hidden">
-                <span class="text-4xl filter grayscale group-hover:grayscale-0 transition-all">💎</span>
-            </div>
-            <h3 class="heading-font text-lg mb-2">Henry Stickman</h3>
-            <p class="text-xs text-gray-500">Stealing the Diamond: Choice-based chaos.</p>
-        </div>
-
-        <!-- Game 3 -->
-        <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/escaping_the_prison.swf', 'Escaping the Prison')">
-            <div class="aspect-square bg-zinc-900 mb-6 flex items-center justify-center border border-white/5 overflow-hidden">
-                <span class="text-4xl filter grayscale group-hover:grayscale-0 transition-all">🏢</span>
-            </div>
-            <h3 class="heading-font text-lg mb-2">Henry Stickman</h3>
-            <p class="text-xs text-gray-500">Escaping the Prison: The ultimate breakout.</p>
-        </div>
-
-        <!-- Game 4 -->
+        <!-- Standard Bad Piggies -->
         <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/bad_piggies.swf', 'Bad Piggies')">
-            <div class="aspect-square bg-zinc-900 mb-6 flex items-center justify-center border border-white/5 overflow-hidden">
-                <span class="text-4xl filter grayscale group-hover:grayscale-0 transition-all">🐷</span>
+            <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
+                <span class="text-5xl opacity-60 group-hover:opacity-100">🐷</span>
             </div>
-            <h3 class="heading-font text-lg mb-2">Bad Piggies</h3>
-            <p class="text-xs text-gray-500">Engineered flight (and failure).</p>
+            <h3 class="heading-font text-lg mb-1">Bad Piggies</h3>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Original Edition</p>
+        </div>
+
+        <!-- Stick War -->
+        <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/stickwar.swf', 'Stick War')">
+            <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
+                <span class="text-5xl opacity-60 group-hover:opacity-100">⚔️</span>
+            </div>
+            <h3 class="heading-font text-lg mb-1">Stick War</h3>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Legacy Command</p>
+        </div>
+
+        <!-- Stealing the Diamond -->
+        <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/stealing_the_diamond.swf', 'Stealing the Diamond')">
+            <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
+                <span class="text-5xl opacity-60 group-hover:opacity-100">💎</span>
+            </div>
+            <h3 class="heading-font text-lg mb-1">Stealing Diamond</h3>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Henry Stickman</p>
+        </div>
+
+        <!-- Escaping the Prison -->
+        <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/escaping_the_prison.swf', 'Escaping the Prison')">
+            <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
+                <span class="text-5xl opacity-60 group-hover:opacity-100">🏢</span>
+            </div>
+            <h3 class="heading-font text-lg mb-1">Escaping Prison</h3>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Henry Stickman</p>
         </div>
     </main>
 
-    <!-- Fullscreen Player -->
+    <!-- Player Container -->
     <div id="player-container">
-        <button class="btn-close heading-font text-xs" onclick="closeGame()">[ Close_Session ]</button>
-        <h2 id="current-title" class="heading-font text-xl mb-6 text-[#00ff41]">Loading...</h2>
-        <div id="ruffle-host"></div>
+        <div class="controls-bar">
+            <div class="flex items-center gap-4">
+                <span id="current-title" class="heading-font text-sm text-[#00ff41] border-l-2 border-[#00ff41] pl-3 uppercase">LOADING...</span>
+            </div>
+            <div class="flex gap-2">
+                <button class="control-btn" onclick="resizePlayer('60vh')">Small</button>
+                <button class="control-btn" onclick="resizePlayer('85vh')">Default</button>
+                <button class="control-btn" onclick="resizePlayer('95vh')">Maximized</button>
+                <button class="control-btn text-[#00ff41] font-bold" onclick="closeGame()">[ Close ]</button>
+            </div>
+        </div>
+        <div id="ruffle-wrapper">
+            <div id="ruffle-host" class="w-full h-full"></div>
+        </div>
     </div>
 
-    <footer class="mt-24 pt-12 border-t border-white/5 text-[10px] text-gray-600 flex justify-between">
-        <div>© FLASH VAULT ARCHIVE // GH-PAGES BRANCH</div>
-        <div class="tracking-widest">ENCRYPTION: AES-256 // EMULATOR: RUFFLE</div>
+    <footer class="mt-32 pt-10 border-t border-white/5 text-[9px] text-gray-700 flex flex-col md:flex-row justify-between gap-4">
+        <p>SOURCE_BRANCH: GITHUB_PAGES // ARCHIVE_V_2.0</p>
+        <p>DESIGNED FOR HIGH-RESOLUTION DISPLAYS // RUFFLE_ENGINE</p>
     </footer>
 
     <script>
@@ -168,34 +223,40 @@
         const ruffle = window.RufflePlayer.newest();
         let player = null;
 
+        // Dynamic Resize Logic
+        function resizePlayer(height) {
+            document.documentElement.style.setProperty('--player-height', height);
+        }
+
         function loadGame(swfPath, title) {
             const container = document.getElementById('player-container');
             const host = document.getElementById('ruffle-host');
             document.getElementById('current-title').innerText = title;
 
             container.style.display = 'flex';
+            host.innerHTML = ''; // Reset host
             
-            // Clear previous instance
-            host.innerHTML = '';
             player = ruffle.createPlayer();
-            player.id = 'ruffle-canvas';
             host.appendChild(player);
 
             player.load({
                 url: swfPath,
                 backgroundColor: "#050505",
-                allowScriptAccess: true
-            }).catch(e => {
-                console.error("Flash failed to load:", e);
-                document.getElementById('current-title').innerText = "ERROR: ASSET NOT FOUND";
+                wmode: "opaque",
+                scale: "showAll",
+                quality: "high"
             });
         }
 
         function closeGame() {
-            const container = document.getElementById('player-container');
-            container.style.display = 'none';
+            document.getElementById('player-container').style.display = 'none';
             document.getElementById('ruffle-host').innerHTML = '';
         }
+
+        // Global hotkey: Escape to exit game
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") closeGame();
+        });
     </script>
 </body>
 </html>
