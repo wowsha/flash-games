@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE FLASH VAULT // ARCHIVE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ruffle Integration -->
+    <script src="rufle/ruffle.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-green: #00ff41;
+            --deep-obsidian: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        body {
+            background-color: var(--deep-obsidian);
+            color: white;
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .heading-font { font-family: 'Syncopate', sans-serif; text-transform: uppercase; }
+
+        /* CRT Effect Overlay */
+        .crt-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 3px 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .game-card {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .game-card:hover {
+            border-color: var(--neon-green);
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);
+        }
+
+        #player-container {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 200;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #ruffle-canvas {
+            width: 90%;
+            max-width: 1000px;
+            aspect-ratio: 4/3;
+            border: 2px solid var(--neon-green);
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.2);
+        }
+
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 65, 0.1);
+            position: absolute;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            from { top: 0; }
+            to { top: 100%; }
+        }
+
+        .btn-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            border: 1px solid var(--neon-green);
+            padding: 0.5rem 1rem;
+            color: var(--neon-green);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-12">
+    <div class="crt-overlay"></div>
+    <div class="scanline"></div>
+
+    <!-- Header Section -->
+    <header class="mb-16 relative">
+        <div class="inline-block bg-[#00ff41] text-black px-2 py-1 text-xs font-bold mb-4">
+            STATUS: ONLINE // LEGACY SYSTEM ACTIVE
+        </div>
+        <h1 class="heading-font text-5xl md:text-8xl font-bold tracking-tighter leading-none">
+            Flash <span class="text-[#00ff41]">Vault</span>
+        </h1>
+        <p class="mt-6 text-gray-400 max-w-xl text-sm leading-relaxed italic">
+            A preserved pocket of digital history. Executing legacy ActionScript 2.0/3.0 modules via Ruffle Emulation.
+        </p>
+    </header>
+
+    <!-- Games Grid -->
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Game 1 -->
+        <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/stickwar.swf', 'Stick War')">
+            <div class="aspect-square bg-zinc-900 mb-6 flex items-center justify-center border border-white/5 overflow-hidden">
+                <span class="text-4xl filter grayscale group-hover:grayscale-0 transition-all">⚔️</span>
+            </div>
+            <h3 class="heading-font text-lg mb-2">Stick War</h3>
+            <p class="text-xs text-gray-500">The empire of Order needs your command.</p>
+        </div>
+
+        <!-- Game 2 -->
+        <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/stealing_the_diamond.swf', 'Stealing the Diamond')">
+            <div class="aspect-square bg-zinc-900 mb-6 flex items-center justify-center border border-white/5 overflow-hidden">
+                <span class="text-4xl filter grayscale group-hover:grayscale-0 transition-all">💎</span>
+            </div>
+            <h3 class="heading-font text-lg mb-2">Henry Stickman</h3>
+            <p class="text-xs text-gray-500">Stealing the Diamond: Choice-based chaos.</p>
+        </div>
+
+        <!-- Game 3 -->
+        <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/escaping_the_prison.swf', 'Escaping the Prison')">
+            <div class="aspect-square bg-zinc-900 mb-6 flex items-center justify-center border border-white/5 overflow-hidden">
+                <span class="text-4xl filter grayscale group-hover:grayscale-0 transition-all">🏢</span>
+            </div>
+            <h3 class="heading-font text-lg mb-2">Henry Stickman</h3>
+            <p class="text-xs text-gray-500">Escaping the Prison: The ultimate breakout.</p>
+        </div>
+
+        <!-- Game 4 -->
+        <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/bad_piggies.swf', 'Bad Piggies')">
+            <div class="aspect-square bg-zinc-900 mb-6 flex items-center justify-center border border-white/5 overflow-hidden">
+                <span class="text-4xl filter grayscale group-hover:grayscale-0 transition-all">🐷</span>
+            </div>
+            <h3 class="heading-font text-lg mb-2">Bad Piggies</h3>
+            <p class="text-xs text-gray-500">Engineered flight (and failure).</p>
+        </div>
+    </main>
+
+    <!-- Fullscreen Player -->
+    <div id="player-container">
+        <button class="btn-close heading-font text-xs" onclick="closeGame()">[ Close_Session ]</button>
+        <h2 id="current-title" class="heading-font text-xl mb-6 text-[#00ff41]">Loading...</h2>
+        <div id="ruffle-host"></div>
+    </div>
+
+    <footer class="mt-24 pt-12 border-t border-white/5 text-[10px] text-gray-600 flex justify-between">
+        <div>© FLASH VAULT ARCHIVE // GH-PAGES BRANCH</div>
+        <div class="tracking-widest">ENCRYPTION: AES-256 // EMULATOR: RUFFLE</div>
+    </footer>
+
+    <script>
+        window.RufflePlayer = window.RufflePlayer || {};
+        const ruffle = window.RufflePlayer.newest();
+        let player = null;
+
+        function loadGame(swfPath, title) {
+            const container = document.getElementById('player-container');
+            const host = document.getElementById('ruffle-host');
+            document.getElementById('current-title').innerText = title;
+
+            container.style.display = 'flex';
+            
+            // Clear previous instance
+            host.innerHTML = '';
+            player = ruffle.createPlayer();
+            player.id = 'ruffle-canvas';
+            host.appendChild(player);
+
+            player.load({
+                url: swfPath,
+                backgroundColor: "#050505",
+                allowScriptAccess: true
+            }).catch(e => {
+                console.error("Flash failed to load:", e);
+                document.getElementById('current-title').innerText = "ERROR: ASSET NOT FOUND";
+            });
+        }
+
+        function closeGame() {
+            const container = document.getElementById('player-container');
+            container.style.display = 'none';
+            document.getElementById('ruffle-host').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
