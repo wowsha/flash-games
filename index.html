@@ -244,7 +244,10 @@
                 backgroundColor: "#050505",
                 wmode: "opaque",
                 scale: "showAll",
-                quality: "high"
+                quality: "high",
+                // Fix for "Permission of allowScriptAccess is required"
+                allowScriptAccess: true, 
+                base: "assets/"
             });
         }
 
