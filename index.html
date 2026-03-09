@@ -183,6 +183,7 @@
                 <button class="control-btn" onclick="resizePlayer('60vh')">Small</button>
                 <button class="control-btn" onclick="resizePlayer('85vh')">Default</button>
                 <button class="control-btn" onclick="resizePlayer('95vh')">Maximized</button>
+                <button class="control-btn border-[#00ff41]" onclick="toggleFullscreen()">Fullscreen</button>
                 <button class="control-btn text-[#00ff41]" onclick="closeGame()">[ Close ]</button>
             </div>
         </div>
@@ -206,6 +207,17 @@
             document.documentElement.style.setProperty('--player-height', height);
         }
 
+        function toggleFullscreen() {
+            const elem = document.getElementById('ruffle-wrapper');
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
         function loadGame(swfPath, title) {
             const container = document.getElementById('player-container');
             const host = document.getElementById('ruffle-host');
@@ -227,6 +239,9 @@
         }
 
         function closeGame() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
             document.getElementById('player-container').style.display = 'none';
             document.getElementById('ruffle-host').innerHTML = '';
         }
