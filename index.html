@@ -107,16 +107,6 @@
             border-color: var(--neon-green);
         }
 
-        .unlocked-badge {
-            background: #ffcc00;
-            color: black;
-            font-size: 9px;
-            padding: 2px 6px;
-            font-weight: 800;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
-
         .scanline {
             width: 100%; height: 2px;
             background: rgba(0, 255, 65, 0.05);
@@ -139,81 +129,76 @@
         <h1 class="heading-font text-6xl md:text-9xl font-bold tracking-tighter">
             FLASH<br><span class="text-[#00ff41]">VAULT</span>
         </h1>
+        <div class="flex flex-col md:flex-row gap-8 mt-10 text-gray-400 text-xs border-l border-white/10 pl-6">
+            <p class="max-w-sm">Secure archive of vector-based gaming assets. Utilizing the Ruffle Sandbox for modern browser execution.</p>
+            <p class="max-w-sm uppercase tracking-widest">[ 4096-BIT ENCRYPTION ]<br>[ NO_ADWARE_DETECTED ]</p>
+        </div>
     </header>
 
     <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        <!-- Bad Piggies Unlocked -->
-        <div class="game-card p-6 cursor-pointer group border-t-2 border-t-yellow-500" onclick="loadGame('assets/main.swf', 'Bad Piggies Unlocked')">
-            <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5 relative">
-                <span class="text-5xl">🚜</span>
-                <div class="absolute top-2 right-2 unlocked-badge">UNLOCKED</div>
-            </div>
-            <h3 class="heading-font text-lg mb-1">Piggies Unlocked</h3>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Full Sandbox Access</p>
-        </div>
-
+        <!-- Bad Piggies -->
         <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/bad_piggies.swf', 'Bad Piggies')">
             <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
                 <span class="text-5xl opacity-60 group-hover:opacity-100">🐷</span>
             </div>
             <h3 class="heading-font text-lg mb-1">Bad Piggies</h3>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Original</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Build machines to help the pigs get the eggs in this creative physics puzzler.</p>
         </div>
 
+        <!-- Stick War -->
         <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/stickwar.swf', 'Stick War')">
             <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
                 <span class="text-5xl opacity-60 group-hover:opacity-100">⚔️</span>
             </div>
             <h3 class="heading-font text-lg mb-1">Stick War</h3>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Legacy</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Lead your stickman army to victory in the legendary strategy war for Inamorta.</p>
         </div>
 
+        <!-- Stealing the Diamond -->
         <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/stealing_the_diamond.swf', 'Stealing the Diamond')">
             <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
                 <span class="text-5xl opacity-60 group-hover:opacity-100">💎</span>
             </div>
             <h3 class="heading-font text-lg mb-1">Stealing Diamond</h3>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">H. Stickman</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Help Henry Stickman break into the museum and steal the Tunisian Diamond.</p>
         </div>
 
+        <!-- Escaping the Prison -->
         <div class="game-card p-6 cursor-pointer group" onclick="loadGame('assets/escaping_the_prison.swf', 'Escaping the Prison')">
             <div class="aspect-[4/3] bg-zinc-900/50 mb-6 flex items-center justify-center border border-white/5">
                 <span class="text-5xl opacity-60 group-hover:opacity-100">🏢</span>
             </div>
             <h3 class="heading-font text-lg mb-1">Escaping Prison</h3>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest">H. Stickman</p>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Navigate through multiple paths and endings to help Henry escape his cell.</p>
         </div>
     </main>
 
+    <!-- Player Interface -->
     <div id="player-container">
         <div class="controls-bar">
             <div class="flex items-center gap-4">
-                <span id="current-title" class="heading-font text-sm text-[#00ff41] border-l-2 border-[#00ff41] pl-3 uppercase">LOADING...</span>
+                <span id="current-title" class="heading-font text-sm text-[#00ff41] border-l-2 border-[#00ff41] pl-3">LOADING...</span>
             </div>
             <div class="flex gap-2">
                 <button class="control-btn" onclick="resizePlayer('60vh')">Small</button>
                 <button class="control-btn" onclick="resizePlayer('85vh')">Default</button>
                 <button class="control-btn" onclick="resizePlayer('95vh')">Maximized</button>
-                <button class="control-btn text-[#00ff41] font-bold" onclick="closeGame()">[ Close ]</button>
+                <button class="control-btn text-[#00ff41]" onclick="closeGame()">[ Close ]</button>
             </div>
         </div>
         <div id="ruffle-wrapper">
-            <!-- Added specific data attributes for security bypass -->
-            <div id="ruffle-host" class="w-full h-full" data-allow-script-access="always"></div>
+            <div id="ruffle-host" class="w-full h-full"></div>
         </div>
+        <p class="text-[9px] text-gray-600 mt-4 uppercase tracking-[0.5em]">Session Monitoring Active // Press Esc to exit</p>
     </div>
 
-    <script>
-        // CRITICAL: GLOBAL CONFIGURATION BEFORE LOADING
-        window.RufflePlayer = window.RufflePlayer || {};
-        window.RufflePlayer.config = {
-            "allowScriptAccess": true,
-            "autoplay": "on",
-            "unmuteOverlay": "hidden",
-            "letterbox": "on",
-            "warnOnUnsupportedContent": false
-        };
+    <footer class="mt-32 pt-10 border-t border-white/5 text-[9px] text-gray-700 flex flex-col md:flex-row justify-between gap-4">
+        <p>RUNNING_ON: GITHUB_PAGES // COMPILED: 2024.05</p>
+        <p>DESIGNED FOR HIGH-RESOLUTION DISPLAYS // NO COOKIES REQ</p>
+    </footer>
 
+    <script>
+        window.RufflePlayer = window.RufflePlayer || {};
         const ruffle = window.RufflePlayer.newest();
         let player = null;
 
@@ -221,7 +206,7 @@
             document.documentElement.style.setProperty('--player-height', height);
         }
 
-        async function loadGame(swfPath, title) {
+        function loadGame(swfPath, title) {
             const container = document.getElementById('player-container');
             const host = document.getElementById('ruffle-host');
             document.getElementById('current-title').innerText = title;
@@ -232,18 +217,13 @@
             player = ruffle.createPlayer();
             host.appendChild(player);
 
-            // Added comprehensive configuration object
-            const config = {
+            player.load({
                 url: swfPath,
                 backgroundColor: "#050505",
-                wmode: "direct", // Try direct for performance and script bypass
-                allowScriptAccess: true,
-                base: "assets/",
-                forceScale: true,
+                wmode: "opaque",
+                scale: "showAll",
                 quality: "high"
-            };
-
-            player.load(config);
+            });
         }
 
         function closeGame() {
@@ -251,6 +231,7 @@
             document.getElementById('ruffle-host').innerHTML = '';
         }
 
+        // Keyboard support
         window.addEventListener('keydown', (e) => {
             if (e.key === "Escape") closeGame();
         });
